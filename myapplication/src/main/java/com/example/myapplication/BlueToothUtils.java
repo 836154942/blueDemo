@@ -30,8 +30,7 @@ import android.util.Log;
 
 public class BlueToothUtils {
     private static final String TAG = "BlueBle";
-    private static final String UUID_SERVICE = "00000000-0000-1000-8000-00805f9b34fb";
-
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothAdapter mBluetoothAdapter;
     private Context mContext;
     private List<BluetoothDevice> mList = new ArrayList(); //搜索到的设备
@@ -103,8 +102,7 @@ public class BlueToothUtils {
     public BlueToothUtils init(Context mContext, BlueToothStatusListener mListener) {
         this.mContext = mContext;
         listenerList.add(mListener);
-        BluetoothManager bluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);//搜索发现设备
@@ -161,7 +159,7 @@ public class BlueToothUtils {
             try {
                 BluetoothServerSocket bluetoothServerSocket =
                         mBluetoothAdapter.listenUsingRfcommWithServiceRecord("com.example.myapplication",
-                                UUID.fromString(UUID_SERVICE));
+                                MY_UUID);
                 mServerSocket = bluetoothServerSocket.accept();//阻塞，直到有蓝牙设备链接
                 if (mServerSocket != null) {
                     Log.e(TAG, " 服务器 收到客户端的连接 ");
@@ -176,25 +174,26 @@ public class BlueToothUtils {
         }
     }
 
-    //开启客户端
+    //开启客户端  链接
     private void connectClint(final BluetoothDevice btDev) {
         new Thread() {
+
             @Override
             public void run() {
                 super.run();
                 try {
                     //通过和服务器协商的uuid来进行连接
-                    mBluetoothSocket = btDev.createRfcommSocketToServiceRecord(UUID.fromString(UUID_SERVICE));
+                    mBluetoothSocket = btDev.createRfcommSocketToServiceRecord(MY_UUID);
 
-                    if (mBluetoothAdapter.isDiscovering()) {
-                        mBluetoothAdapter.cancelDiscovery();
-                    }
+//                    if (mBluetoothAdapter.isDiscovering()) {
+                    mBluetoothAdapter.cancelDiscovery();
+//                    }
 
-                    if (!mBluetoothSocket.isConnected()) {
+//                    if (!mBluetoothSocket.isConnected()) {
                         Log.e("blueTooth", "客户端自己 开始连接...");
                         mHandler.sendEmptyMessage(0x110);
                         mBluetoothSocket.connect();
-                    }
+//                    }
                     Log.e("blueTooth", "客户端自己  已经链接");
                     mHandler.sendEmptyMessage(0x111);
 

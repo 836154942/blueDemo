@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
-    <TextView
-            android:textSize="16sp"
-            android:layout_margin="10dp"
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal">
+
+        <TextView
             android:id="@+id/tv01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-
-    <ImageView
-
-            android:src="@color/colorAccent"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="180dp"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center_horizontal"
+            android:textSize="80dp" />
+
+    </ScrollView>
 </RelativeLayout>
