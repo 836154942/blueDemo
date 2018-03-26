@@ -25,10 +25,10 @@ public class PhotoActivity extends AppCompatActivity implements BlueToothUtils.B
     private int currentIndex;
 
     private List<PhotoFragment> fragments = new ArrayList<>();
-    private static final String RIGHT_STRING = "r";
-    private static final String LEFT_STRING = "l";
-    private static final String BIG_STRING = "b";
-    private static final String SMALL_STRING = "s";
+    private static final String RIGHT_STRING = "r"; // 右
+    private static final String LEFT_STRING = "l";   // 左
+    private static final String BIG_STRING = "b";  //  放大
+    private static final String SMALL_STRING = "s";  // 缩小
     int screedWidth;
     int screenHeight;
     private float scal = 1F;
