@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context="com.example.myapplication.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.myapplication.MainActivity">
 
 
-    <TextView
-            android:hint="这是状态："
-            android:id="@+id/tv_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-            android:id="@+id/btnScan"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="扫描"/>
+            android:text="当前状态  " />
 
-    <Button
-            android:id="@+id/end"
+
+        <TextView
+            android:id="@+id/statusTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="结束扫描"/>
+            android:text="  " />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/goConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="扫描" />
 
     <EditText
-            android:id="@+id/edtext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-    />
+        android:id="@+id/edtext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hello World!" />
 
     <Button
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="send文本消息"/>
+        android:id="@+id/btnSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="send文本消息" />
 
 
     <Button
-            android:id="@+id/btnGO"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="连接好了，进入接收文字页面，显示收到的"/>
+        android:id="@+id/btnGO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="连接好了，进入接收文字页面，显示收到的" />
 
     <Button
-            android:id="@+id/btnGOPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="链接好了，`进入图片翻页页面"
-    />
-
-    <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        android:id="@+id/btnGOPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="链接好了，`进入图片翻页页面" />
 
 
 </LinearLayout>

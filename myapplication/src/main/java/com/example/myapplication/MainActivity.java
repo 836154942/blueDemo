@@ -1,85 +1,66 @@
 package com.example.myapplication;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity
-        implements AdapterView.OnItemClickListener, View.OnClickListener, BlueToothUtils.BlueToothStatusListener {
-    private static final String TAG = "BlueBle";
+import java.io.File;
+import java.util.List;
 
-    ProgressDialog progressDialog;
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, BlueToothUtils.BlueToothStatusListener {
+    private static final int REQUSET_CODE_TAKE = 0x47;
     BlueToothUtils blueToothUtils;
-    List<BluetoothDevice> mList = new ArrayList();
     EditText edtext;
-    ListView listView;
-    TextView setatusView;
+    TextView statusTv;
+    String FILE_PATH;
+
+    private static final String TAKE_PHOTO = "take";  // 拍照
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        blueToothUtils = BlueToothUtils.getIntence().init(this, this);
         initView();
-        //开启服务端
-        blueToothUtils.startServer();
+        blueToothUtils = BlueToothUtils.getIntence();
+        blueToothUtils.addListener(this);
     }
 
     private void initView() {
-        setatusView = (TextView) findViewById(R.id.tv_status);
+        statusTv = (TextView) findViewById(R.id.statusTv);
         edtext = (EditText) findViewById(R.id.edtext);
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setOnItemClickListener(this);
-        findViewById(R.id.btnScan).setOnClickListener(this);
-        findViewById(R.id.end).setOnClickListener(this);
         findViewById(R.id.btnSend).setOnClickListener(this);
         findViewById(R.id.btnGO).setOnClickListener(this);
+        findViewById(R.id.goConnect).setOnClickListener(this);
         findViewById(R.id.btnGOPhoto).setOnClickListener(this);
-        progressDialog = new ProgressDialog(this);
+
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Log.e(TAG, mList.get(i).getName());
-        blueToothUtils.createBond(mList.get(i));
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btnScan:
-                Log.e(TAG, "开始扫描  " + blueToothUtils.scanDevices());//开始扫描设备
+            case R.id.goConnect:
+                startActivity(new Intent(this, ConnectActivity.class));
                 break;
-            case R.id.end:
-                blueToothUtils.cancleScanDev();//取消扫描
-                break;
-            //            case R.id.have:
-            //                Set<BluetoothDevice> bondedDevices = blueToothUtils.bondedDevices();
-            //                for (BluetoothDevice item : bondedDevices) {
-            //                    Log.e("遍历配对过的设备 ", "name  " + item.getName() + "    " + item.getAddress());
-            //                }
-            //                break;
             case R.id.btnGO:
                 startActivity(new Intent(this, ShowActivity.class));
                 break;
 
             case R.id.btnSend:
+
                 blueToothUtils.clintSend(edtext.getText().toString());
                 break;
             case R.id.btnGOPhoto:
@@ -88,45 +69,68 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void startScan() {
-        progressDialog.setMessage("正在扫描");
-        progressDialog.show();
-        setatusView.setText("正在扫描…………");
-    }
-
-    @Override
-    public void scnanDevicesOver(List<BluetoothDevice> list) {
-        mList = list;
-        listView.setAdapter(new DeviceAdapter(mList, this));
-        progressDialog.dismiss();
-        setatusView.setText("扫描结束……");
-    }
-
-    @Override
-    public void haveNewData(String data) {
-        setatusView.setText("收到新的数据--> " + data);
-    }
-
-    @Override
-    public void connectServerSuccess() {
-        setatusView.setText("链接服务器成功  ");
-    }
-
-    @Override
-    public void connectServerException() {
-        setatusView.setText("链接服务器失败 ");
-    }
-
-    @Override
-    public void startConnect() {
-        setatusView.setText("开始连接");
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        blueToothUtils.unSignBroadReceive();
-        blueToothUtils = null;
+    }
+
+    @Override
+    public void startScan() {
+
+    }
+
+    @Override
+    public void scnanDevicesOver(List<BluetoothDevice> list) {
+
+    }
+
+    @Override
+    public void haveNewData(String data) {
+        statusTv.setText("收到  " + data);
+        if (TAKE_PHOTO.equals(data)) {
+            takePhoto();
+
+        }
+    }
+
+
+    private void takePhoto() {
+
+        FILE_PATH = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+        Intent intent = new Intent();
+        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        File file = new File(FILE_PATH);
+        if (file.exists()) {
+            file.delete();
+        }
+        // 把文件地址转换成Uri格式
+        Uri uri = Uri.fromFile(file);
+        // 设置系统相机拍摄照片完成后图片文件的存放地址
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, REQUSET_CODE_TAKE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUSET_CODE_TAKE && resultCode == RESULT_OK) {
+            ToastUtils.show("文件已保存到  " + FILE_PATH);
+        }
+    }
+
+
+    @Override
+    public void connectServerSuccess() {
+        statusTv.setText("连接成功");
+    }
+
+    @Override
+    public void connectServerException() {
+
+    }
+
+    @Override
+    public void startConnect() {
+        statusTv.setText("开始连接");
     }
 }

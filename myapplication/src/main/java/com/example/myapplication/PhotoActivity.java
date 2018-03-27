@@ -1,11 +1,16 @@
 package com.example.myapplication;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,6 +24,7 @@ import android.view.WindowManager;
  */
 
 public class PhotoActivity extends AppCompatActivity implements BlueToothUtils.BlueToothStatusListener, ViewPager.OnPageChangeListener {
+
     private int[] photoId = {R.mipmap.bg1, R.mipmap.bg2, R.mipmap.bg3,
             R.mipmap.bg5, R.mipmap.bg6};
     ViewPager viewPager;
@@ -29,6 +35,7 @@ public class PhotoActivity extends AppCompatActivity implements BlueToothUtils.B
     private static final String LEFT_STRING = "l";   // 左
     private static final String BIG_STRING = "b";  //  放大
     private static final String SMALL_STRING = "s";  // 缩小
+
     int screedWidth;
     int screenHeight;
     private float scal = 1F;

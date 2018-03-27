@@ -40,7 +40,7 @@ public class BlueToothUtils {
     private BluetoothSocket mServerSocket;//服务器器的
     private List<BlueToothStatusListener> listenerList = new ArrayList<>();
     private static BlueToothUtils mInstance;
-
+    BluetoothServerSocket bluetoothServerSocket;
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -157,7 +157,7 @@ public class BlueToothUtils {
         @Override
         public void run() {
             try {
-                BluetoothServerSocket bluetoothServerSocket =
+                bluetoothServerSocket =
                         mBluetoothAdapter.listenUsingRfcommWithServiceRecord("com.example.myapplication",
                                 MY_UUID);
                 mServerSocket = bluetoothServerSocket.accept();//阻塞，直到有蓝牙设备链接
@@ -169,6 +169,24 @@ public class BlueToothUtils {
                     serverReceiveData(inputStream);//死循环 服务器一直 接受 数据
                 }
             } catch (IOException e) {
+                try {
+                    if (mBluetoothSocket != null) {
+                        mBluetoothSocket.close();
+                        mBluetoothSocket = null;
+                    }
+
+
+                    if (mServerSocket != null) {
+                        mServerSocket.close();
+                        mServerSocket = null;
+                    }
+                    if (bluetoothServerSocket != null) {
+                        bluetoothServerSocket.close();
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
                 e.printStackTrace();
             }
         }
@@ -190,9 +208,9 @@ public class BlueToothUtils {
 //                    }
 
 //                    if (!mBluetoothSocket.isConnected()) {
-                        Log.e("blueTooth", "客户端自己 开始连接...");
-                        mHandler.sendEmptyMessage(0x110);
-                        mBluetoothSocket.connect();
+                    Log.e("blueTooth", "客户端自己 开始连接...");
+                    mHandler.sendEmptyMessage(0x110);
+                    mBluetoothSocket.connect();
 //                    }
                     Log.e("blueTooth", "客户端自己  已经链接");
                     mHandler.sendEmptyMessage(0x111);
@@ -204,7 +222,16 @@ public class BlueToothUtils {
                     mHandler.sendEmptyMessage(0x112);
                     Log.e("blueTooth", "客户端自己...链接失败");
                     try {
-                        mBluetoothSocket.close();
+                        if (mBluetoothSocket != null) {
+                            mBluetoothSocket.close();
+                            mBluetoothSocket = null;
+                        }
+
+
+                        if (mServerSocket != null) {
+                            mServerSocket.close();
+                            mServerSocket = null;
+                        }
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -288,6 +315,11 @@ public class BlueToothUtils {
                     Log.e(TAG, "广播  广播  Name : " + btDevice.getName() + " Address: " + btDevice.getAddress());
                     if (!mList.contains(btDevice)) {
                         mList.add(btDevice);
+                        if (btDevice.getName().startsWith("OPPO R11 P") ||
+                                btDevice.getName().startsWith("HC")) {
+                            createBond(btDevice);
+                            cancleScanDev();
+                        }
                     }
 
                 } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(intent.getAction())) {
