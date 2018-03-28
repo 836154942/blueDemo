@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
@@ -175,7 +174,6 @@ public class BlueToothUtils {
                         mBluetoothSocket = null;
                     }
 
-
                     if (mServerSocket != null) {
                         mServerSocket.close();
                         mServerSocket = null;
@@ -203,15 +201,15 @@ public class BlueToothUtils {
                     //通过和服务器协商的uuid来进行连接
                     mBluetoothSocket = btDev.createRfcommSocketToServiceRecord(MY_UUID);
 
-//                    if (mBluetoothAdapter.isDiscovering()) {
+                    //                    if (mBluetoothAdapter.isDiscovering()) {
                     mBluetoothAdapter.cancelDiscovery();
-//                    }
+                    //                    }
 
-//                    if (!mBluetoothSocket.isConnected()) {
+                    //                    if (!mBluetoothSocket.isConnected()) {
                     Log.e("blueTooth", "客户端自己 开始连接...");
                     mHandler.sendEmptyMessage(0x110);
                     mBluetoothSocket.connect();
-//                    }
+                    //                    }
                     Log.e("blueTooth", "客户端自己  已经链接");
                     mHandler.sendEmptyMessage(0x111);
 
@@ -226,7 +224,6 @@ public class BlueToothUtils {
                             mBluetoothSocket.close();
                             mBluetoothSocket = null;
                         }
-
 
                         if (mServerSocket != null) {
                             mServerSocket.close();
@@ -315,8 +312,9 @@ public class BlueToothUtils {
                     Log.e(TAG, "广播  广播  Name : " + btDevice.getName() + " Address: " + btDevice.getAddress());
                     if (!mList.contains(btDevice)) {
                         mList.add(btDevice);
-                        if (btDevice.getName().startsWith("OPPO R11 P") ||
-                                btDevice.getName().startsWith("HC")) {
+                        if (btDevice.getName() != null
+                                && (btDevice.getName().startsWith("OPPO R11 P") ||
+                                            btDevice.getName().startsWith("HC"))) {
                             createBond(btDevice);
                             cancleScanDev();
                         }

@@ -7,16 +7,15 @@ import android.widget.Toast;
  */
 
 public class ToastUtils {
-    public static  Toast toast;
+    public static Toast toast;
 
-
-    public static void show(String text){
-        if (toast==null){
-            toast = Toast.makeText(MyApplication.intance,text,Toast.LENGTH_SHORT);
-        }else {
-            toast.setText(text);
-        }
-
-        toast.show();
+    public static void show(String text) {
+        //        if (toast==null){
+        //            toast = Toast.makeText(MyApplication.intance,text,Toast.LENGTH_SHORT);
+        //        }else {
+        //            toast.setText(text);
+        //        }
+        //
+        //        toast.show();
     }
 }

@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import java.util.List;
 
-
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -44,6 +43,9 @@ public class ShowActivity extends AppCompatActivity implements BlueToothUtils.Bl
 
     @Override
     public void haveNewData(String data) {
+        if (isFinishing()) {
+            return;
+        }
         Log.e("@222222222222222", "有新的 数据    " + data);
         if (!mTv.getText().equals("")) {
             mTv.append("\r\n");
@@ -77,5 +79,11 @@ public class ShowActivity extends AppCompatActivity implements BlueToothUtils.Bl
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BlueToothUtils.getIntence().remove(this);
     }
 }
